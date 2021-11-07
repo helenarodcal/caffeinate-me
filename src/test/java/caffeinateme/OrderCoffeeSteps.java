@@ -1,6 +1,8 @@
 package caffeinateme;
 
 import caffeinateme.model.*;
+import io.cucumber.java.ParameterType;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -12,15 +14,20 @@ public class OrderCoffeeSteps {
     CoffeeShop coffeeShop = new CoffeeShop();
     Order order;
 
-    @Given("Cathy is {int} metres from the coffee shop")
-    public void cathy_is_metres_from_the_coffee_shop(Integer distanceInMetres) {
+    @Given("Cathy is {float} metre(s) from the coffee shop")
+    public void cathy_is_metres_from_the_coffee_shop(Float distanceInMetres) {
         cathy.setDistanceFromShop(distanceInMetres);
     }
 
-    @When("^Cathy orders a (.*)")
+    @When("^Cathy (?:orders|has ordered) an? (.*)")
     public void cathy_orders_a(String orderedProduct) {
         this.order = Order.of(1,orderedProduct).forCustomer(cathy);
         cathy.placesAnOrderFor(order).at(coffeeShop);
+    }
+
+    @And("Cathy is {int} minutes away")
+    public void customerIsMinutesAway(int etaInMinutes) {
+        coffeeShop.setCustomerETA(cathy, etaInMinutes);
     }
 
     @Then("Barry should receive the order")
@@ -28,7 +35,12 @@ public class OrderCoffeeSteps {
         assertThat(coffeeShop.getPendingOrders()).contains(order);
     }
 
-    @Then("^Barry should know that the order is (.*)")
+    @ParameterType(name = "orderStatus", value = "Normal|High|Urgent")
+    public OrderStatus orderStatus (String status){
+        return OrderStatus.valueOf(status);
+    }
+    //    @Then("Barry should know that the order is {word}")
+    @Then("Barry should know that the order is {orderStatus}")
     public void barry_should_know_that_the_order_is(OrderStatus expectedStatus) {
         assertThat(coffeeShop.getOrderFor(cathy)).isPresent();
         coffeeShop.getOrderFor(cathy).ifPresent(
