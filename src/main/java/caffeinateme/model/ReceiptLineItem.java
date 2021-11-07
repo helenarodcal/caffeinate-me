@@ -5,9 +5,9 @@ public class ReceiptLineItem {
     private final int quantity;
     private final double price;
 
-    public ReceiptLineItem(String product, int quanity, double price) {
+    public ReceiptLineItem(String product, int quantity, double price) {
         this.product = product;
-        this.quantity = quanity;
+        this.quantity = quantity;
         this.price = price;
     }
 
