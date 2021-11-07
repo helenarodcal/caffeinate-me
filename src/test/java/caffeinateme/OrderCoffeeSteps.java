@@ -1,4 +1,4 @@
-package caffeinateme;
+package caffeinateme.steps;
 
 import caffeinateme.model.*;
 import io.cucumber.java.ParameterType;
